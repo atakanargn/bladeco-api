@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-const Station = require('../models/station');
+const Device = require('../models/device');
 
-// Get station by name
+// Get device by name
 router.get('/search/:name', async function(req, res, next) {
     try{
         console.log(decodeURI(req.params.name))
-        const data = await Station.find({name:{ $regex: '.*' + decodeURI(req.params.name) + '.*' }});
+        const data = await Device.find({code:{ $regex: '.*' + decodeURI(req.params.name) + '.*' }});
         res.status(200).json(data)
     }
     catch(error){
@@ -15,12 +15,12 @@ router.get('/search/:name', async function(req, res, next) {
     }
 });
 
-// Get station by id
+// Get device by id
 router.get('/:id', async function(req, res, next) {
     try{
-        const data = await Station.findById(req.params.id);
+        const data = await Device.findById(req.params.id);
         if(data==null){
-            res.status(404).json({status:false, message: 'Station not found'});
+            res.status(404).json({status:false, message: 'Device not found'});
         }else{
             res.status(200).json(data)
         }
@@ -32,7 +32,7 @@ router.get('/:id', async function(req, res, next) {
 
 router.get('/', async function(req, res, next) {
     try{
-        const data = await Station.find();
+        const data = await Device.find();
         res.json(data)
     }
     catch(error){
@@ -44,9 +44,9 @@ router.post('/', async function(req, res, next) {
     try{
         var payload = req.body;
 
-        const stations = new Station(payload);
+        const devices = new Device(payload);
 
-        const dataToSave = await stations.save();
+        const dataToSave = await devices.save();
         res.status(200).json(dataToSave)
         return
     }catch(err){
@@ -59,7 +59,7 @@ router.post('/', async function(req, res, next) {
 router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const data = await Station.findByIdAndDelete(id)
+        const data = await Device.findByIdAndDelete(id)
         res.status(200).send({status:true})
     }
     catch (error) {
@@ -74,12 +74,12 @@ router.patch('/:id', async (req, res) => {
         updatedData.updated_date = new Date()
         const options = { new: true };
 
-        const result = await Station.findByIdAndUpdate(
+        const result = await Device.findByIdAndUpdate(
             id, updatedData, options
         )
 
         if(result==null){
-            res.status(404).json({status:false, message: 'Station not found'});
+            res.status(404).json({status:false, message: 'Device not found'});
         }else{
             res.send(result)
         }

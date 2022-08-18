@@ -7,17 +7,32 @@ const admin = require('firebase-admin');
 const serviceAccount = require('./service-account-key.json');
 const fs = require('fs')
 var mongoose = require('mongoose');
+require('dotenv').config();
+const cors = require('cors');
+
+const mongoString = process.env.DATABASE_URL
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-var mongoDB = 'mongodb://127.0.0.1/my_database';
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(mongoString);
+const database = mongoose.connection
 
+database.on('error', (error) => {
+  console.log(error)
+})
+
+database.once('connected', () => {
+  console.log('Database Connected');
+})
 
 // Import routers
 var indexRouter = require('./routes/index');
 var stationRouter = require('./routes/station');
+var deviceRouter = require('./routes/device');
+var userRouter = require('./routes/user');
+const { render } = require('ejs');
 
 // Set express
 var app = express();
@@ -26,7 +41,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -36,8 +51,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Setting routes
 app.use('/api/', indexRouter);
 app.use('/api/station/',stationRouter);
+app.use('/api/user/',userRouter);
+app.use('/api/device/',deviceRouter);
 
-
+app.get('/',async function(req, res,next) {
+  res.render('index')
+})
 
 app.use(function(req, res, next) {
   next(createError(404));
@@ -46,9 +65,9 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  console.log(err)
   res.status(err.status || 500);
-  res.render('error');
+  res.send(err.message);
 });
 
 module.exports = app;
