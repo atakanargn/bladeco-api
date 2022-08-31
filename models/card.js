@@ -1,22 +1,21 @@
 const mongoose = require('mongoose');
 
 const dataScheme = new mongoose.Schema({
-    fullname:{
-        required:false,
-        type:String,
-        default:""
-    },
-    phone:{
+    uuid:{
         required:true,
+        type:String
+    },
+    user:{
+        required:false,
         type:String
     },
     status:{
         required:false,
         type:Number,
-        default:1 // 0 - Yasaklı, 1 - Aktif, 2 - Şarjda
+        default:0
     },
     created_date: { type: Date, default: Date.now },
     updated_date: { type: Date, default: Date.now }
 })
 
-module.exports = mongoose.model('User', dataScheme)
+module.exports = mongoose.model('Card', dataScheme)

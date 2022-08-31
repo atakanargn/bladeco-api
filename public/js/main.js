@@ -1,215 +1,259 @@
-var API_URL = 'http://'+(window.location.hostname.includes("192")?`${window.location.hostname}:3000`:window.location.hostname)
+var API_URL = (window.location.hostname.includes("heroku") ? `https://` : 'http://') + (window.location.hostname.includes("192") || window.location.hostname.includes("localhost") ? `${window.location.hostname}:3000` : window.location.hostname)
 var istasyonlar = []
 
 var lat = 0
 var lon = 0
 var map;
-var infoCanvasStatus=true;
-var focusedStation="";
+var infoCanvasStatus = true;
+var focusedStation = "";
 var start = [30.5394227, 37.7829171];
 
 var timer;
-var markers=[]
+var markers = []
 
 function loading() {
-    $("#kullaniciGirisiModal").modal({backdrop: "static",keyboard:false});
+    $("#kullaniciGirisiModal").modal({ backdrop: "static", keyboard: false });
     $("#loading").fadeToggle();
 }
 
-function istasyonAraFocus(){
-    $('#istasyonara').css('width','25%')
+function istasyonAraFocus() {
+    $('#istasyonara').css('width', '25%')
     $("#istasyonlar").fadeToggle();
 }
 
-function istasyonAraFocusOut(){
-    $('#istasyonara').css('width','10%')
+function istasyonAraFocusOut() {
+    $('#istasyonara').css('width', '10%')
     $("#istasyonlar").fadeToggle();
 }
 
-async function yolTarifi(lat,lon){
-    const coords = [lon,lat]
-            const end = {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
+async function yolTarifi(lat, lon) {
+    const coords = [lon, lat]
+    const end = {
+        type: 'FeatureCollection',
+        features: [
+            {
+                type: 'Feature',
+                properties: {},
+                geometry: {
                     type: 'Point',
                     coordinates: coords
-                  }
                 }
-              ]
-            };
-            if (map.getLayer('end')) {
-              map.getSource('end').setData(end);
-            } else {
-              map.addLayer({
-                id: 'end',
-                type: 'circle',
-                source: {
-                  type: 'geojson',
-                  data: {
+            }
+        ]
+    };
+    if (map.getLayer('end')) {
+        map.getSource('end').setData(end);
+    } else {
+        map.addLayer({
+            id: 'end',
+            type: 'circle',
+            source: {
+                type: 'geojson',
+                data: {
                     type: 'FeatureCollection',
                     features: [
-                      {
-                        type: 'Feature',
-                        properties: {},
-                        geometry: {
-                          type: 'Point',
-                          coordinates: coords
+                        {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Point',
+                                coordinates: coords
+                            }
                         }
-                      }
                     ]
-                  }
-                },
-                paint: {
-                  'circle-radius': 10,
-                  'circle-color': '#f30'
                 }
-              });
+            },
+            paint: {
+                'circle-radius': 10,
+                'circle-color': '#f30'
             }
-            getRoute(coords);
+        });
+    }
+    getRoute(coords);
 }
 
 jQuery(document).ready(function ($) {
 
-    
+
 
     function getLocation() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
+            navigator.geolocation.getCurrentPosition(showPosition, (error) => {
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        console.log("User denied the request for Geolocation.");
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Sayfayı görüntüleyebilmek için konum izni vermelisiniz!',
+                            showConfirmButton: false,
+                            closeOnCancel: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
+                        })
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Konum verisi alınamıyor!',
+                            showConfirmButton: false,
+                            closeOnCancel: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
+                        })
+                        break;
+                    case error.TIMEOUT:
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Konum isteği zaman aşımına uğradı!',
+                            showConfirmButton: false,
+                            closeOnCancel: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
+                        })
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Konum servisleri ile ilgili bilinmeyen bir hata oluştu!',
+                            showConfirmButton: false,
+                            closeOnCancel: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
+                        })
+                        break;
+                }
+            });
         }
-        
+
     }
 
-    //getLocation()
-    testStart();
+    getLocation()
+    //testStart();
 
     function testStart() {
-        lat=37.7829171
-        lon=30.5394227
+        lat = 37.7829171
+        lon = 30.5394227
         mapboxgl.accessToken = 'pk.eyJ1IjoiZHlmZm9yeSIsImEiOiJjbDZtOTVqaXQwMXN3M2lubHY1dDA2MnY0In0.9Zl4U4ESKtJEZI_Ic9_Lmg';
         const geolocate = new mapboxgl.GeolocateControl({
             positionOptions: {
-            enableHighAccuracy: true
+                enableHighAccuracy: true
             },
             trackUserLocation: true,
             showUserHeading: true
-            });
+        });
 
         map = new mapboxgl.Map({
             container: 'map',
-            center: [lon,lat],
+            center: [lon, lat],
             style: 'mapbox://styles/mapbox/streets-v11',
-            zoom:12,
-            language:'tr'
+            zoom: 12,
+            language: 'tr'
         })
-        
-        setTimeout(()=>{
+
+        setTimeout(() => {
             getStations()
-            
+
             map.on('load', async () => {
 
-                    
-                        // Add the control to the map.
-                        map.addControl(geolocate);
-                        geolocate.trigger();
+
+                // Add the control to the map.
+                map.addControl(geolocate);
+                geolocate.trigger();
 
                 map.addLayer({
                     id: 'point',
                     type: 'circle',
                     source: {
-                      type: 'geojson',
-                      data: {
-                        type: 'FeatureCollection',
-                        features: [
-                          {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: {
-                              type: 'Point',
-                              coordinates: start
-                            }
-                          }
-                        ]
-                      }
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    type: 'Feature',
+                                    properties: {},
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: start
+                                    }
+                                }
+                            ]
+                        }
                     },
                     paint: {
-                      'circle-radius': 10,
-                      'circle-color': '#3887be'
+                        'circle-radius': 10,
+                        'circle-color': '#3887be'
                     }
-                  });
+                });
 
                 await getRoute(start);
-              });
-        },700)
+            });
+        }, 700)
     }
 
     function showPosition(position) {
         lat = position.coords.latitude
         lon = position.coords.longitude
-        start = [lon,lat]
+        start = [lon, lat]
         mapboxgl.accessToken = 'pk.eyJ1IjoiZHlmZm9yeSIsImEiOiJjbDZtOTVqaXQwMXN3M2lubHY1dDA2MnY0In0.9Zl4U4ESKtJEZI_Ic9_Lmg';
         const geolocate = new mapboxgl.GeolocateControl({
             positionOptions: {
-            enableHighAccuracy: true
+                enableHighAccuracy: true
             },
             trackUserLocation: true,
             showUserHeading: true
-            });
+        });
 
         map = new mapboxgl.Map({
             container: 'map',
-            center: [lon,lat],
+            center: [lon, lat],
             style: 'mapbox://styles/mapbox/streets-v11',
-            zoom:12,
-            language:'tr'
+            zoom: 12,
+            language: 'tr'
         })
-        
-        setTimeout(()=>{
+
+        setTimeout(() => {
             getStations()
-            
+
             map.on('load', async () => {
 
-                    
-                        // Add the control to the map.
-                        map.addControl(geolocate);
-                        geolocate.trigger();
+
+                // Add the control to the map.
+                map.addControl(geolocate);
+                geolocate.trigger();
 
                 map.addLayer({
                     id: 'point',
                     type: 'circle',
                     source: {
-                      type: 'geojson',
-                      data: {
-                        type: 'FeatureCollection',
-                        features: [
-                          {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: {
-                              type: 'Point',
-                              coordinates: start
-                            }
-                          }
-                        ]
-                      }
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    type: 'Feature',
+                                    properties: {},
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: start
+                                    }
+                                }
+                            ]
+                        }
                     },
                     paint: {
-                      'circle-radius': 10,
-                      'circle-color': '#3887be'
+                        'circle-radius': 10,
+                        'circle-color': '#3887be'
                     }
-                  });
+                });
 
                 await getRoute(start);
-              });
-        },700)
+            });
+        }, 700)
     }
 
-    
 
-    function getStations(){
+
+    function getStations() {
         $.get(API_URL + `/api/station`, function (data) {
             istasyonlar = data;
             var cnt = 0;
@@ -224,7 +268,7 @@ jQuery(document).ready(function ($) {
                             </div>
                         </div>
                         `);
-                if(istasyonlar[i].lat!=undefined || istasyonlar[i].lat!=0){
+                if (istasyonlar[i].lat != undefined || istasyonlar[i].lat != 0) {
 
                     const el = document.createElement('div');
                     const width = 60;
@@ -234,15 +278,15 @@ jQuery(document).ready(function ($) {
                     el.style.width = `60px`;
                     el.style.height = `48px`;
                     el.style.backgroundSize = '100%';
-                    
+
                     el.addEventListener('click', () => {
                         istasyonGetir(`${istasyonlar[i]._id}`)
                     });
-                    
+
                     // Add markers to the map.
                     markers.push(new mapboxgl.Marker(el)
-                    .setLngLat([istasyonlar[i].lon,istasyonlar[i].lat])
-                    .addTo(map))
+                        .setLngLat([istasyonlar[i].lon, istasyonlar[i].lat])
+                        .addTo(map))
 
                     /*istasyonlar[i].marker = new mapboxgl.Marker({
                         color: "#000",
@@ -260,13 +304,13 @@ jQuery(document).ready(function ($) {
                         .setLngLat([istasyonlar[i].lon,istasyonlar[i].lat])
                         .addTo(map);*/
                 }
-                
+
                 cnt++;
             }
             $('#search-info').html(`Toplam ${cnt}`);
-    
+
         }).then(() => {
-            
+
             /*map.on('click', (event) => {
                 const coords = Object.keys(event.lngLat).map((key) => event.lngLat[key]);
                 const end = {
@@ -313,7 +357,7 @@ jQuery(document).ready(function ($) {
                 getRoute(coords);
               });*/
 
-              
+
 
             loading()
         })
@@ -322,13 +366,13 @@ jQuery(document).ready(function ($) {
     document.getElementById('phone').addEventListener('input', function (e) {
         var x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-      });
+    });
 
-    
 
-    
 
-    
+
+
+
 
     $("#istasyonara-input").keyup(function () {
         var sonucyok = true;
@@ -337,7 +381,7 @@ jQuery(document).ready(function ($) {
 
         var cnt = 0;
 
-        for(let i=0;i<markers.length;i++){
+        for (let i = 0; i < markers.length; i++) {
             markers[i].remove()
         }
 
@@ -354,27 +398,27 @@ jQuery(document).ready(function ($) {
                     </div>
                     `);
 
-                    if(istasyonlar[i].lat!=undefined || istasyonlar[i].lat!=0){
+                if (istasyonlar[i].lat != undefined || istasyonlar[i].lat != 0) {
 
-                        const el = document.createElement('div');
-                        const width = 60;
-                        const height = 60;
-                        el.className = 'marker';
-                        el.style.backgroundImage = `url(./images/marker.png)`;
-                        el.style.width = `60px`;
-                        el.style.height = `48px`;
-                        el.style.backgroundSize = '100%';
-                        
-                        el.addEventListener('click', () => {
-                            window.alert('test');
-                        });
-                        
-                        // Add markers to the map.
-                        markers.push(new mapboxgl.Marker(el)
-                        .setLngLat([istasyonlar[i].lon,istasyonlar[i].lat])
+                    const el = document.createElement('div');
+                    const width = 60;
+                    const height = 60;
+                    el.className = 'marker';
+                    el.style.backgroundImage = `url(./images/marker.png)`;
+                    el.style.width = `60px`;
+                    el.style.height = `48px`;
+                    el.style.backgroundSize = '100%';
+
+                    el.addEventListener('click', () => {
+                        window.alert('test');
+                    });
+
+                    // Add markers to the map.
+                    markers.push(new mapboxgl.Marker(el)
+                        .setLngLat([istasyonlar[i].lon, istasyonlar[i].lat])
                         .addTo(map))
-                    }
-                
+                }
+
                 sonucyok = false;
                 cnt++;
             }
@@ -391,135 +435,135 @@ jQuery(document).ready(function ($) {
 
 
 
-function kodgonder(){
+function kodgonder() {
     var telefon = $('#phone').val()
     $.ajax({
-        url: API_URL+'/api/user',
+        url: API_URL + '/api/user',
         type: 'post',
         dataType: 'json',
         contentType: 'application/json',
         success: function (data) {
-            if(data.status){
+            if (data.status) {
                 Swal.fire({
                     icon: 'success',
                     title: data.message,
                     showConfirmButton: true
-                  })
+                })
                 $('#kodgonder').fadeToggle();
                 $('#onayla').fadeToggle();
                 $('#phone').fadeToggle();
                 $('#code').fadeToggle();
                 $('#labelCode').fadeToggle();
                 $('#labelPhone').fadeToggle();
-            }else{
+            } else {
                 Swal.fire({
                     icon: 'danger',
                     title: data.message,
                     showConfirmButton: true
-                  })
+                })
             }
-            
+
         },
         data: JSON.stringify({
-            phone:'+90'+telefon.replace(' ','')
-            .replace('(','')
-            .replace(')','')
-            .replace('-','')
+            phone: '+90' + telefon.replace(' ', '')
+                .replace('(', '')
+                .replace(')', '')
+                .replace('-', '')
         })
     });
 }
 
-function onayla(){
+function onayla() {
     var telefon = $('#phone').val()
-    var code     = $('#code').val()
+    var code = $('#code').val()
     $.ajax({
-        url: API_URL+'/api/user/verify',
+        url: API_URL + '/api/user/verify',
         type: 'post',
         dataType: 'json',
         contentType: 'application/json',
         success: function (data) {
-            if(data.status){
+            if (data.status) {
 
                 Swal.fire({
                     icon: 'success',
                     title: 'Hoşgeldiniz, giriş başarılı!',
                     showConfirmButton: true
-                  })
+                })
                 $('#btnModalClose').trigger('click');
-            }else{
+            } else {
                 Swal.fire({
                     icon: 'danger',
                     title: data.message,
                     showConfirmButton: true
-                  })
+                })
             }
-            
+
         },
         data: JSON.stringify({
-            phone:'+90'+telefon.replace(' ','')
-            .replace('(','')
-            .replace(')','')
-            .replace('-',''),
-            code:code
+            phone: '+90' + telefon.replace(' ', '')
+                .replace('(', '')
+                .replace(')', '')
+                .replace('-', ''),
+            code: code
         })
     });
 }
 
 async function getRoute(end) {
-    
+
     const query = await fetch(
-      `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?language=tr&steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
-      { method: 'GET' }
+        `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?language=tr&steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
+        { method: 'GET' }
     );
     const json = await query.json();
     const data = json.routes[0];
     const route = data.geometry.coordinates;
     const geojson = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'LineString',
-        coordinates: route
-      }
+        type: 'Feature',
+        properties: {},
+        geometry: {
+            type: 'LineString',
+            coordinates: route
+        }
     };
     // if the route already exists on the map, we'll reset it using setData
     if (map.getSource('route')) {
-      map.getSource('route').setData(geojson);
+        map.getSource('route').setData(geojson);
     }
     // otherwise, we'll make a new request
     else {
-      map.addLayer({
-        id: 'route',
-        type: 'line',
-        source: {
-          type: 'geojson',
-          data: geojson
-        },
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': '#3887be',
-          'line-width': 5,
-          'line-opacity': 0.75
-        }
-      });
+        map.addLayer({
+            id: 'route',
+            type: 'line',
+            source: {
+                type: 'geojson',
+                data: geojson
+            },
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': '#3887be',
+                'line-width': 5,
+                'line-opacity': 0.75
+            }
+        });
     }
-    try{
+    try {
         var instructions = document.getElementById('instructions')
         instructions.innerHTML = `<strong>${Math.floor(data.duration / 60)} dakika</strong>`;
-    }catch(Err){
+    } catch (Err) {
 
     }
-    
 
-  }
-  
-  
-  
 
-function zoomOnMap(lat,lon){
+}
+
+
+
+
+function zoomOnMap(lat, lon) {
     map.flyTo({
         center: [lon, lat],
         zoom: 14,
@@ -527,7 +571,7 @@ function zoomOnMap(lat,lon){
         curve: 1,
         easing(t) {
             console.log(t)
-        return t;
+            return t;
         }
     });
 }
@@ -612,6 +656,16 @@ function istasyonGuncelle() {
 
             <div class="row">
                 <div class="col-6 text-right" >
+                    Sıcaklık : 
+                </div>
+                <div class="col-6 text-left">
+                    ${istasyonum.temperature}
+                </div>
+            </div>
+            <hr/>
+
+            <div class="row">
+                <div class="col-6 text-right" >
                     Son Durum : 
                 </div>
                 <div class="col-6 text-left">
@@ -634,7 +688,7 @@ function markOnMap(lat, lon) {
 }
 
 function istasyonGetir(id) {
-    focusedStation=id
+    focusedStation = id
     var istasyonum;
     for (let i = 0; i < istasyonlar.length; i++) {
         if (istasyonlar[i]._id == id) {
@@ -725,19 +779,19 @@ function istasyonGetir(id) {
     infoCanvas(options)
 }
 
-function infoCanvasClosed(){
-    infoCanvasStatus=true;
+function infoCanvasClosed() {
+    infoCanvasStatus = true;
 }
 
 function infoCanvas(options) {
     $('#infoCanvasTitle').html(options.title);
     $('#infoCanvasBody').html(options.body);
     setTimeout(() => {
-        if(infoCanvasStatus){
+        if (infoCanvasStatus) {
             $('#infoCanvasBtn').trigger('click');
-            infoCanvasStatus=false;
+            infoCanvasStatus = false;
         }
-            
+
     }, 100);
-    timer = setInterval(()=>{istasyonGuncelle();},5000);
+    timer = setInterval(() => { istasyonGuncelle(); }, 5000);
 }

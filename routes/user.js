@@ -20,7 +20,55 @@ function smsGonder(phone,message){
         .then(() => console.log("Success"));
 }
 
+// Get users
+router.get('/', async function(req, res, next) {
+    try{
+        const data = await User.find();
+        if(data==null){
+            res.status(404).json({status:false, message: 'Card not found'});
+        }else{
+            res.status(200).json(data)
+        }
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+});
 
+router.get('/p/:phone', async function(req, res, next) {
+    try{
+        const data = await User.findOne({phone:req.params.phone});
+        await User.findByIdAndUpdate(
+            data._id, {
+                status:1
+            },{
+                new:true
+            });
+        if(data==null){
+            res.status(404).json({status:false, message: 'User not found'});
+        }else{
+            res.status(200).json(data)
+        }
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+});
+
+// Get user by id
+router.get('/:id', async function(req, res, next) {
+    try{
+        const data = await User.find({id:req.params.id});
+        if(data==null){
+            res.status(404).json({status:false, message: 'User not found'});
+        }else{
+            res.status(200).json(data)
+        }
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+});
 
 router.post('/', async function(req, res, next) {
     try{

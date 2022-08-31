@@ -3,18 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const admin = require('firebase-admin');
-const serviceAccount = require('./service-account-key.json');
 const fs = require('fs')
 var mongoose = require('mongoose');
 require('dotenv').config();
 const cors = require('cors');
 
-const mongoString = process.env.DATABASE_URL
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+const mongoString = "mongodb+srv://admin:Doksan+90=180@blackpoint.sojqld1.mongodb.net/?retryWrites=true&w=majority"
 
 mongoose.connect(mongoString);
 const database = mongoose.connection
@@ -32,6 +26,7 @@ var indexRouter = require('./routes/index');
 var stationRouter = require('./routes/station');
 var deviceRouter = require('./routes/device');
 var userRouter = require('./routes/user');
+var cardRouter = require('./routes/card');
 const { render } = require('ejs');
 
 // Set express
@@ -53,6 +48,7 @@ app.use('/api/', indexRouter);
 app.use('/api/station/',stationRouter);
 app.use('/api/user/',userRouter);
 app.use('/api/device/',deviceRouter);
+app.use('/api/card/',cardRouter);
 
 app.get('/',async function(req, res,next) {
   res.render('index')
@@ -70,4 +66,5 @@ app.use(function(err, req, res, next) {
   res.send(err.message);
 });
 
-module.exports = app;
+var port = 3000
+app.listen(process.env.PORT || port, () => console.log(`listening at http://localhost:${port}`));
