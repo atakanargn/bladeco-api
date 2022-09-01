@@ -68,7 +68,7 @@ router.post('/auth', async (req, res) => {
             inprogress: 1,
             user: user._id,
             charge_start_date: new Date(),
-            watt:0
+            watt: 0
         }, {
             new: true
         });
@@ -111,13 +111,13 @@ router.post('/update', async (req, res) => {
 
         await Station.findByIdAndUpdate(
             station._id, {
-            watt:station.watt+payload.watt
+            watt: station.watt + payload.watt
         }, {
             new: true
         });
 
-        res.send({status:true,message:"Watt eklendi."})
-        
+        res.send({ status: true, message: "Watt eklendi." })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: error.message })

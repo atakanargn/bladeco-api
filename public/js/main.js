@@ -254,7 +254,7 @@ jQuery(document).ready(function ($) {
 
 
     function getStations() {
-        $.get(API_URL + `/api/station`, function (data) {
+        $.get(API_URL + `/api/v1/station`, function (data) {
             istasyonlar = data;
             var cnt = 0;
             for (let i = 0; i < istasyonlar.length; i++) {
@@ -438,7 +438,7 @@ jQuery(document).ready(function ($) {
 function kodgonder() {
     var telefon = $('#phone').val()
     $.ajax({
-        url: API_URL + '/api/user',
+        url: API_URL + '/api/v1/user',
         type: 'post',
         dataType: 'json',
         contentType: 'application/json',
@@ -477,7 +477,7 @@ function onayla() {
     var telefon = $('#phone').val()
     var code = $('#code').val()
     $.ajax({
-        url: API_URL + '/api/user/verify',
+        url: API_URL + '/api/v1/user/verify',
         type: 'post',
         dataType: 'json',
         contentType: 'application/json',
@@ -578,7 +578,7 @@ function zoomOnMap(lat, lon) {
 
 function istasyonGuncelle() {
     var id = focusedStation;
-    $.get(API_URL + `/api/station`, function (data) {
+    $.get(API_URL + `/api/v1/station`, function (data) {
         istasyonlar = data;
     }).then(() => {
         var istasyonum;

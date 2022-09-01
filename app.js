@@ -44,11 +44,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Setting routes
-app.use('/api/', indexRouter);
-app.use('/api/station/',stationRouter);
-app.use('/api/user/',userRouter);
-app.use('/api/device/',deviceRouter);
-app.use('/api/card/',cardRouter);
+app.use('/api/v1', indexRouter);
+app.use('/api/v1/station/',stationRouter);
+app.use('/api/v1/user/',userRouter);
+app.use('/api/v1/device/',deviceRouter);
+app.use('/api/v1/card/',cardRouter);
 
 app.get('/',async function(req, res,next) {
   res.render('index')

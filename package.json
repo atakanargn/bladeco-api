@@ -12,7 +12,6 @@
     "dotenv": "^16.0.1",
     "ejs": "^3.1.8",
     "express": "~4.16.1",
-    "firebase-admin": "^11.0.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "mongoose": "^6.5.2",
