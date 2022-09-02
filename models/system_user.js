@@ -7,7 +7,7 @@ const dataScheme = new mongoose.Schema({
     },
     password: {
         required: true,
-        type: Number
+        type: String
     },
     phone:{
         required: true,
