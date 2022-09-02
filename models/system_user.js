@@ -25,10 +25,6 @@ const dataScheme = new mongoose.Schema({
         required: false,
         type: String
     },
-    token:{
-        required: false,
-        type: String
-    },
     created_date: { type: Date, default: Date.now },
     updated_date: { type: Date, default: Date.now }
 })
