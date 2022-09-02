@@ -5,10 +5,6 @@ const dataScheme = new mongoose.Schema({
         required: true,
         type: String,
     },
-    username: {
-        required: true,
-        type: Number
-    },
     password: {
         required: true,
         type: Number
@@ -22,6 +18,10 @@ const dataScheme = new mongoose.Schema({
         type: String
     },
     permissions: {
+        required: false,
+        type: String
+    },
+    unvan:{
         required: false,
         type: String
     },
