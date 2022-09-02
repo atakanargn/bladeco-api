@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const SystemUser = require('../models/system_user');
 
@@ -35,7 +37,7 @@ router.post('/', async function(req, res, next) {
         var payload = req.body;
         encryptedPassword = await bcrypt.hash(payload.password, 10);
         payload.password = encryptedPassword
-        
+
         const token = jwt.sign(
             { user_id: password._id },
             "BL4D3C0",
