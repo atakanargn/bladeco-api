@@ -33,4 +33,4 @@ const dataScheme = new mongoose.Schema({
     updated_date: { type: Date, default: Date.now }
 })
 
-module.exports = mongoose.model('Station', dataScheme)
+module.exports = mongoose.model('SystemUser', dataScheme)
