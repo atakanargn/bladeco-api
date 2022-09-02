@@ -39,7 +39,7 @@ router.post('/', async function(req, res, next) {
         payload.password = encryptedPassword
 
         const token = jwt.sign(
-            { user_id: password._id },
+            { user_id: payload.phone, password:payload.password },
             "BL4D3C0",
             {
               expiresIn: "2h",
