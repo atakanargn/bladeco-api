@@ -33,7 +33,18 @@ router.get('/', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
     try{
         var payload = req.body;
+        encryptedPassword = await bcrypt.hash(payload.password, 10);
+        payload.password = encryptedPassword
+        
+        const token = jwt.sign(
+            { user_id: password._id },
+            "BL4D3C0",
+            {
+              expiresIn: "2h",
+            }
+          );
 
+        payload.token = token;
         const users = new SystemUser(payload);
         const dataToSave = await users.save();
         res.status(200).json(dataToSave)
