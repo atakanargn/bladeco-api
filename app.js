@@ -7,6 +7,8 @@ const fs = require('fs')
 var mongoose = require('mongoose');
 require('dotenv').config();
 const cors = require('cors');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const mongoString = "mongodb+srv://admin:Doksan+90=180@blackpoint.sojqld1.mongodb.net/?retryWrites=true&w=majority"
 
