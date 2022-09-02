@@ -11,8 +11,7 @@ const dataScheme = new mongoose.Schema({
     },
     station: {
         required:false,
-        type:String,
-        default:0
+        type:String
     },
     model: {
         required: false,
@@ -20,23 +19,23 @@ const dataScheme = new mongoose.Schema({
     },
     service_status:{
         required:false,
-        type:Boolean,
-        default:false
+        type:Number
     },
     network_status:{
         required:false,
-        type:Boolean,
-        default:false
+        type:Boolean
     },
-    relay:{
+    relay_0:{
         required:false,
-        type:Boolean,
-        default:0
+        type:Number
     },
-    socket_status:{
+    relay_1:{
         required:false,
-        type:Boolean,
-        default:0
+        type:Number
+    },
+    relay_2:{
+        required:false,
+        type:Number
     },
     charge_start_date:{
         required:false,
@@ -45,6 +44,16 @@ const dataScheme = new mongoose.Schema({
     last_user:{
         required:false,
         type:String
+    },
+    inprogress:{
+        required:false,
+        type:Number,
+        default:0
+    },
+    watt:{
+        required:false,
+        type:Number,
+        default:0
     },
     created_date: { type: Date, default: Date.now },
     updated_date: { type: Date, default: Date.now }

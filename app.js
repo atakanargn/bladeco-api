@@ -27,6 +27,8 @@ var stationRouter = require('./routes/station');
 var deviceRouter = require('./routes/device');
 var userRouter = require('./routes/user');
 var cardRouter = require('./routes/card');
+var systemUserRouter = require('./routes/system_user');
+
 const { render } = require('ejs');
 
 // Set express
@@ -45,20 +47,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Setting routes
 app.use('/api/v1', indexRouter);
-app.use('/api/v1/station/',stationRouter);
-app.use('/api/v1/user/',userRouter);
-app.use('/api/v1/device/',deviceRouter);
-app.use('/api/v1/card/',cardRouter);
+app.use('/api/v1/station/', stationRouter);
+app.use('/api/v1/user/', userRouter);
+app.use('/api/v1/device/', deviceRouter);
+app.use('/api/v1/card/', cardRouter);
+app.use('/api/v1/system_user/', systemUserRouter);
 
-app.get('/',async function(req, res,next) {
+app.get('/', async function (req, res, next) {
   res.render('index')
 })
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   console.log(err)
