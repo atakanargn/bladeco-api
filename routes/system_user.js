@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const SystemUser = require('../models/system_user');
 
 // Login user
-router.post('/login', function (req, res,next) {
+router.post('/login', async function (req, res,next) {
     try{
         var payload = req.body;
         encryptedPassword = await bcrypt.hash(payload.password, 10);
