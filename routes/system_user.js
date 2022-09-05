@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const CryptoJS = require("crypto-js");
 
 const SystemUser = require('../models/system_user');
 
@@ -9,22 +9,22 @@ const SystemUser = require('../models/system_user');
 router.post('/login', async function (req, res,next) {
     try{
         var payload = req.body;
-        encryptedPassword = await bcrypt.hash(payload.password, 10);
+        encryptedPassword = CryptoJS.MD5(payload.password).toString();
 
-        
+        const user = await SystemUser.findOne({password:encryptedPassword,phone:payload.phone});
 
-        var user = SystemUser.findOne({password:encryptedPassword,phone:payload.phone});
         if(user!=null){
             const token = jwt.sign(
-                { user_id: payload.phone, password:encryptedPassword },
+                { user_id: payload.phone, password:encryptedPassword,permissions:user.permissions},
                 "BL4D3C0",
                 {
                   expiresIn: "2h",
                 }
               );
-            res.send({token:token})
+            res.cookie('token',token)
+            res.send({status:true,message:"Kullanıcı girişi başarılı."})
         }else{
-            res.send(404).send({message:"Kullanıcı adı ya da şifre yanlış!"})
+            res.status(200).send({status:false,message:"Kullanıcı adı ya da şifre yanlış!"})
         }
     }catch(err){
 
@@ -35,7 +35,7 @@ router.post('/login', async function (req, res,next) {
 router.post('/', async function(req, res, next) {
     try{
         var payload = req.body;
-        encryptedPassword = await bcrypt.hash(payload.password, 10);
+        encryptedPassword = CryptoJS.MD5(payload.password).toString();
         payload.password = encryptedPassword
 
         const users = new SystemUser(payload);

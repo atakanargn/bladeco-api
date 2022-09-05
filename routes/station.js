@@ -1,9 +1,27 @@
 var express = require('express');
 var router = express.Router();
 
+const jwt = require("jsonwebtoken");
+
 const Station = require('../models/station');
 const Card = require('../models/card');
 const User = require('../models/user');
+
+const verify =  (req, res, next) => {
+        const token =
+            req.body.token || req.query.token || req.headers["x-access-token"] || req.cookies.token;
+
+        if (!token) {
+            return res.status(403).send("A token is required for authentication");
+        }
+        try {
+            const decoded = jwt.verify(token, 'BL4D3C0');
+            req.user = decoded;
+        } catch (err) {
+            return res.status(401).send("Invalid Token");
+        }
+        return next();
+}
 
 // Şarj işlemi başlatma
 router.post('/auth', async (req, res) => {
@@ -228,8 +246,18 @@ router.get('/search/:name', async function (req, res, next) {
 });
 
 // Get station by id
-router.get('/:id', async function (req, res, next) {
+router.get('/:id', verify, async function (req, res, next) {
     try {
+
+        // Izin seviyesi
+        if(req.user.permissions<11){
+            res.status(400).send({
+                message: "You do not have permission to access this station"
+            })
+            return
+        }
+
+        console.log(req.user)
         const data = await Station.findById(req.params.id);
         if (data == null) {
             res.status(404).json({ status: false, message: 'Station not found' });

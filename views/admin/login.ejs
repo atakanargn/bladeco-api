@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <title>BlackPoint CPMS</title>
+    <link rel="stylesheet" href="style/bootstrap.css">
+    <link rel="stylesheet" href="style/prism-okaidia.css">
+    <style>
+        body{
+            overflow-y: hidden;
+            overflow-x: hidden;
+            font-weight: bolder;
+        }
+
+        .divider:after,
+        .divider:before {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .h-custom {
+            height: calc(100%);
+        }
+
+        @media (max-width: 450px) {
+            .h-custom {
+                height: 100%;
+            }
+        }
+
+        #container {
+            /*background-image: url('./images/background.png');*/
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        #container2 {
+            background-image: url('../img/device.jpg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 766px) {
+            #container2 {
+                display: none;
+            }
+        }
+
+        .floating-label-group {
+            position: relative;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+
+        .floating-label-group .floating-label {
+            font-size: 22px;
+            color: #cccccc;
+            position: absolute;
+            pointer-events: none;
+            top: 2px;
+            left: 12px;
+            transition: all 0.1s ease;
+        }
+
+        .floating-label-group input:focus~.floating-label,
+        .floating-label-group input:not(:focus):valid~.floating-label {
+            top: -16px;
+            padding-left: 15px;
+            padding-right: 15px;
+            bottom: 0px;
+            left: 15px;
+            font-size: 20px;
+            opacity: 1;
+            color: #3980bf;
+            background-color: #FFF;
+            height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="vh-100">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="container-fluid h-custom" id="container">
+                    <div
+                        class="row d-flex justify-content-center align-items-center h-75">
+
+                        <div class="col-md-10 col-lg-10 col-xl-8">
+                            <center>
+                                <img src="../img/label_admin.png"
+                                    class="img-fluid"
+                                    style="padding:2em;">
+                            </center>
+                            <form>
+                                <div class="form-outline mb-3">
+                                    <div class="floating-label-group">
+                                        <input type="text" id="username"
+                                            class="form-control form-control-l"
+                                            autofocus required />
+                                        <label
+                                            class="floating-label">Telefon</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-outline mb-3">
+                                    <div class="floating-label-group">
+                                        <input type="password"
+                                            id="password"
+                                            class="form-control form-control-l"
+                                            autofocus required />
+                                        <label
+                                            class="floating-label">Şifre</label>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="button"
+                                        class="btn btn-danger btn-lg btn-block"
+                                        id="loginButton" onclick="girisYap()">Giriş
+                                        Yap</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="container-fluid h-custom" id="container2">
+                    <div class="col-md-10 col-lg-10 col-xl-8">
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+        <script src="js/bootstrap.bundle.min.js"></script>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/prism.js"></script>
+        <script src="js/custom.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="js/login.js"></script>
+</body>
+
+</html>
