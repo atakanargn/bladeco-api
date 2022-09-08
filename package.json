@@ -1,6 +1,7 @@
 {
   "name": "blackpoint-api",
   "version": "1.0.0",
+  "author":"Atakan Argın",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
@@ -19,6 +20,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.5.4",
     "morgan": "~1.9.1",
+    "mssql": "^9.0.1",
     "nodemon": "^2.0.19",
     "twilio": "^3.80.1"
   }

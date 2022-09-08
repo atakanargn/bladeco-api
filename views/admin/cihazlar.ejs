@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>BlackPoint CPMS</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+</head>
+
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar-->
+        <div class="border-end bg-white" id="sidebar-wrapper">
+            <div class="sidebar-heading border-bottom bg-light">
+                BlackPoint CPMS</div>
+            <%- include ('partials/menu.ejs') %>
+        </div>
+        <!-- Page content wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Top navigation-->
+            <nav
+                class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-primary"
+                        id="sidebarToggle">...</button>
+                </div>
+            </nav>
+            <!-- Page content-->
+            <div class="container-fluid p-4">
+                <h1 class="mt-4">Cihazlar</h1>
+                <hr/>
+                <p>
+                    Cihazlar, istasyonların içerisinde bulunan her bir sokettir.<br/>
+                    Kurulum yapmadan önce bu sayfadan cihazın kurulacağı istasyonu ve cihazın model seçimini yapıyoruz.<br/>
+                    Sistemin bize atadığı cihaz kodu ile cihazı etkinleştirdikten sonra yazılım güncellemesi varsa bu güncellemeleri yapıyoruz.<br/>
+                    Cihazı etkinleştirdikten sonra kullanıma hazır hale gelecektir.
+                </p>
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-primary"
+                        onclick="yeniCihazModal()">Yeni cihaz
+                        ekle</button>
+                <table id="stations_table"
+                    class="display cell-border compact hover stripe">
+                    <thead>
+                        <tr>
+                            <th scope="col">Kod</th>
+                            <th scope="col">Isim</th>
+                            <th scope="col">Model</th>
+                            <th scope="col">Istasyon</th>
+                            <th scope="col">Servis Durumu</th>
+                            <th scope="col">İşlem</th>
+                        </tr>
+                    </thead>
+                </table>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detay Modal -->
+    <div class="modal fade" id="detayModal" data-bs-backdrop="static"
+        data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detayModal_title"></h5>
+                </div>
+                <div class="modal-body" id="detayModal_icerik">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary"
+                        id="kayitBtn" onclick="kaydet()"
+                        guid="">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yeni istasyon ekle  Modal -->
+    <div class="modal fade" id="yeniCihazModal"
+        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Cihaz</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="new_name"
+                            class="form-label">Cihaz Kodu</label>
+                        <input type="text" class="form-control"
+                            id="new_code" disabled="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_name"
+                            class="form-label">Isim</label>
+                        <input type="text" class="form-control"
+                            id="new_name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_model" class="form-label mt-2">Model</label>
+                        <select class="form-select" id="new_model">
+
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="new_station" class="form-label mt-2">Istasyon</label>
+                        <select class="form-select" id="new_station">
+
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="new_description"
+                            class="form-label mt-2">Açıklama</label>
+                        <textarea class="form-control"
+                            id="new_description" rows="2"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal" onclick="formTemizle()">Kapat</button>
+                    <button type="button" class="btn btn-primary" onclick="ekle()"
+                        guid="">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/devices.js"></script>
+</body>
+
+</html>

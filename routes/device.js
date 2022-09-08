@@ -6,7 +6,6 @@ const Device = require('../models/device');
 // Get device by name
 router.get('/search/:name', async function(req, res, next) {
     try{
-        console.log(decodeURI(req.params.name))
         const data = await Device.find({code:{ $regex: '.*' + decodeURI(req.params.name) + '.*' }});
         res.status(200).json(data)
     }

@@ -11,7 +11,6 @@ const verify =  (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, 'BL4D3C0');
-        console.log(decoded)
         req.user = decoded;
     } catch (err) {
         console.log(err)
@@ -22,6 +21,36 @@ const verify =  (req, res, next) => {
 
 router.get('/', verify, async function (req, res, next) {
         res.render('admin/index')
+})
+
+router.get('/istasyonlar', verify, async function (req, res, next) {
+    res.render('admin/istasyonlar')
+})
+
+router.get('/modeller', verify, async function (req, res, next) {
+    res.render('admin/modeller')
+})
+
+router.get('/cihazlar', verify, async function (req, res, next) {
+    res.render('admin/cihazlar')
+})
+
+router.get('/kartlar', verify, async function (req, res, next) {
+    res.render('admin/kartlar')
+})
+
+router.get('/sys_users', verify, async function (req, res, next) {
+    res.render('admin/sys_users')
+})
+
+router.get('/users', verify, async function (req, res, next) {
+    res.render('admin/users')
+})
+
+router.get('/logout', verify, async function (req, res, next) {
+    res.clearCookie('token')
+    res.render('admin/login')
+    return res.end()
 })
 
 module.exports = router;

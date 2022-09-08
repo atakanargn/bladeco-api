@@ -257,7 +257,6 @@ router.get('/:id', verify, async function (req, res, next) {
             return
         }
 
-        console.log(req.user)
         const data = await Station.findById(req.params.id);
         if (data == null) {
             res.status(404).json({ status: false, message: 'Station not found' });
