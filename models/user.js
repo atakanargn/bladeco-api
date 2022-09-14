@@ -10,10 +10,18 @@ const dataScheme = new mongoose.Schema({
         required:true,
         type:String
     },
+    email:{
+        required:false,
+        type:String
+    },
     status:{
         required:false,
         type:Number,
         default:1 // 0 - Yasaklı, 1 - Aktif, 2 - Şarjda
+    },
+    password:{
+        required:false,
+        type:String
     },
     created_date: { type: Date, default: Date.now },
     updated_date: { type: Date, default: Date.now }

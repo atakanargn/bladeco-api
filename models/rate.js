@@ -1,22 +1,30 @@
 const mongoose = require('mongoose');
 
 const dataScheme = new mongoose.Schema({
-    uuid:{
+    name:{
         required:true,
         type:String
     },
-    user:{
+    description:{
         required:false,
         type:String,
-        default:"-"
+        default:""
     },
-    status:{
+    isActive:{
         required:false,
-        type:Number,
-        default:0
+        type:Boolean,
+        default:false
+    },
+    type:{
+        required:true,
+        type:String
+    },
+    fee:{
+        required:true,
+        type:Number
     },
     created_date: { type: Date, default: Date.now },
     updated_date: { type: Date, default: Date.now }
 })
 
-module.exports = mongoose.model('Card', dataScheme)
+module.exports = mongoose.model('Rate', dataScheme)

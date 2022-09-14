@@ -23,13 +23,15 @@ database.once('connected', () => {
 })
 
 // Import routers
-var indexRouter = require('./routes/index');
-var stationRouter = require('./routes/station');
-var deviceRouter = require('./routes/device');
-var userRouter = require('./routes/user');
-var cardRouter = require('./routes/card');
+var indexRouter      = require('./routes/index');
+var locationRouter   = require('./routes/location');
+var stationRouter    = require('./routes/station');
+var rateRouter       = require('./routes/rate');
+var userRouter       = require('./routes/user');
+var cardRouter       = require('./routes/card');
 var systemUserRouter = require('./routes/system_user');
-var adminRouter = require('./routes/admin');
+var adminRouter      = require('./routes/admin');
+
 
 const { render } = require('ejs');
 
@@ -117,11 +119,13 @@ app.post('/api/v1/query', async (req, res, next) => {
 
 // Setting routes
 app.use('/api/v1', indexRouter);
+app.use('/api/v1/location',locationRouter);
 app.use('/api/v1/station/', stationRouter);
+app.use('/api/v1/rate/', rateRouter);
 app.use('/api/v1/user/', userRouter);
-app.use('/api/v1/device/', deviceRouter);
 app.use('/api/v1/card/', cardRouter);
 app.use('/api/v1/system_user/', systemUserRouter);
+
 
 // Admin page
 app.use('/admin/', adminRouter);
