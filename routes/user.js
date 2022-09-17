@@ -78,7 +78,7 @@ router.post('/', async function(req, res, next) {
 
         verifications[payload.phone] = {code:code,payload:payload}
 
-        smsGonder(payload.phone,'BlackPoint Giriş Kodunuz : '+verifications[payload.phone].code)
+        smsGonder(payload.phone,'BladeCo Giriş Kodunuz : '+verifications[payload.phone].code)
         console.log(code)
         res.status(200).json({status:true,message:"Doğrulama kodu telefonunuza gönderildi."})
         return

@@ -22,7 +22,7 @@ router.post('/login', async function (req, res,next) {
                 }
               );
             res.cookie('token',token)
-            res.send({status:true,message:"Kullanıcı girişi başarılı."})
+            res.send({status:true,data:user})
         }else{
             res.status(200).send({status:false,message:"Kullanıcı adı ya da şifre yanlış!"})
         }
