@@ -9,7 +9,7 @@ require('dotenv').config();
 const cors = require('cors');
 var mssql = require("mssql");
 
-const mongoString = "mongodb+srv://admin:Doksan+90=180@blackpoint.sojqld1.mongodb.net/?retryWrites=true&w=majority"
+const mongoString = "mongodb+srv://admin:90+90=180@blackpoint.sojqld1.mongodb.net/?retryWrites=true&w=majority"
 
 mongoose.connect(mongoString);
 const database = mongoose.connection
